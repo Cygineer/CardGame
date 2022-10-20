@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,8 +43,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button resetBtn = findViewById(R.id.reset_btn);
         resetBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+
                 init();
             }
         });
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //카드 리스트에 담기
             cards.add(new MemoryCard(imageList.get(i), false, false));
 
-            buttons[i].setImageResource(cards.get(i).getImageId());
+            buttons[i].setImageResource(R.drawable.question);
         }
     }
 
@@ -113,5 +116,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(id == R.id.imageBtn7){
             position = 7;
         }
-    }
+
+        //업데이트 모델
+        updateModel(position);
+
+        //업데이트 뷰
+        updateView(position);
+
+    }// onClick()
+
+    //데이터변경
+    private void updateModel(int position){
+
+        MemoryCard card = cards.get(position);
+
+        //나중에 카드 비교할 때 뒤집고 재클릭 방지
+        if (card.isFaceUp()) {
+
+            Toast.makeText(this, "이미 뒤집혔음", Toast.LENGTH_SHORT).show();
+            return;
+
+        }// if
+
+        //반대의 값을 넣는다 (앞면->뒷면, 뒷면->앞면)
+        cards.get(position).setFaceUp(!card.isFaceUp());
+
+    }// updateModel
+
+    //뷰 변경
+    private void updateView(int position){
+
+        MemoryCard card = cards.get(position);
+
+        //뒤집었으면 랜덤 이미지 보여준다.
+        if(card.isFaceUp()){
+            buttons[position].setImageResource(card.getImageId());
+        } else {
+            //기본 이미지
+            buttons[position].setImageResource(R.drawable.question);
+        }// if
+
+    }// updateView
+
+
+
 }//MainActivity
